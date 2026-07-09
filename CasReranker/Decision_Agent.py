@@ -9,7 +9,7 @@ client = OpenAI(
     timeout=1800.0,  # heavy 1000-candidate calls generate ~25k tokens; needs a long timeout
     max_retries=1
 )
-MODEL_NAME = "Qwen3.5_9B"  # served-model-name of the local vLLM instance (TP=2, GPU 1,2)
+MODEL_NAME = "Qwen3.5_4B"  # served-model-name of the local vLLM instance (TP=2, GPU 1,2)
 
 
 def build_text_messages(system_prompt, content):
