@@ -1,7 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 """所有小模型在 test_hardneg 上训练+推理 N=20/50/100/500"""
 import sys, os, random, pickle, time, traceback, json
-sys.path.insert(0, "c:/Prcharm_Code/DiffAgent/Baseline")
+sys.path.insert(0, ".")  # SmallModel 模块在同一目录
 import numpy as np
 import torch
 random.seed(0); np.random.seed(0); torch.manual_seed(0)

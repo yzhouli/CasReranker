@@ -4,12 +4,12 @@ import pickle
 import time
 from tqdm import tqdm
 
-from DiffAgent.Decision_Agent import DecisionAgent
-from DiffAgent.DynamicInterest_Agent import DynamicInterestAgent
-from DiffAgent.SourcePerception_Agent import SourcePerceptionAgent
-from DiffAgent.TopologyAttraction_Agent import TopologyAttractionAgent
+from Decision_Agent import DecisionAgent
+from DynamicInterest_Agent import DynamicInterestAgent
+from SourcePerception_Agent import SourcePerceptionAgent
+from TopologyAttraction_Agent import TopologyAttractionAgent
 
-MODEL_NAME = "DiffAgent"
+MODEL_NAME = "CasReranker"
 
 def load_pkl(path):
     with open(path, "rb") as f:

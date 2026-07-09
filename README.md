@@ -20,32 +20,23 @@
 
 ```
 release/
-├── code/                              # 所有模型代码
-│   ├── diffagent_v4.py                # CasReranker 主流水线（多专家调度、多GPU并行、RAG记忆）
-│   ├── Decision_Agent.py              # 决策智能体（冲突消解、辩论日志、分层加权）
-│   ├── SourcePerception_Agent.py      # 传播源感知智能体（多模态内容-用户文本匹配）
-│   ├── DynamicInterest_Agent.py       # 动态兴趣感知智能体（RAG记忆检索、用户画像匹配）
-│   ├── TopologyAttraction_Agent.py    # 拓扑吸引感知智能体（社交图 nd/th/deg/kw 计算）
-│   ├── main.py                        # 入口脚本（参数解析、批量推理调度）
+├── CasReranker/                       # 多智能体协同重排序
+│   ├── CasReranker.py                 # 主流水线（多GPU并行、RAG记忆、自适应token）
+│   ├── SourcePerception_Agent.py      # 传播源感知智能体
+│   ├── DynamicInterest_Agent.py       # 动态兴趣感知智能体
+│   ├── TopologyAttraction_Agent.py    # 拓扑吸引感知智能体
+│   └── Decision_Agent.py              # 决策智能体
+├── SmallModel/                        # GNN 基线模型
+│   ├── GraphSAGE.py / GCN.py / GAT.py / GIN.py   # 异构图 GNN
+│   ├── HGT.py / HGAT.py / HGCN.py                 # 异构图 Transformer
+│   ├── DIN.py / SASRec.py / PMRCA.py              # 序列推荐基线
 │   ├── baselines_all_hardneg.py       # 全基线批量训练+评估
-│   ├── evaluation.py                  # H@K / MAP@K / NDCG@K 指标计算
-│   ├── mllms.py                       # 单智能体LLM排序评估（需配置API Key）
-│   ├── mllms_qwen3.7_hardneg.py       # 闭源API模型评估（Qwen/GPT/GLM，需配置API Key）
-│   ├── GraphSAGE.py / GCN.py / GAT.py / GIN.py   # 异构图GNN基线
-│   ├── HGT.py / HGAT.py / HGCN.py                 # 异构图Transformer基线
-│   ├── DIN.py                         # Deep Interest Network
-│   ├── SASRec.py                      # Self-Attentive Sequential Recommendation
-│   └── PMRCA.py                       # 级联共现图模型
-├── Casbench/                              # 数据集 (8文件, 7.8GB)
-│   ├── test_hardneg.pkl               # LLM推理主测试集（1856样本，N=20难负样本）
-│   ├── test_hardneg1000.pkl           # LLM大候选集测试（1856样本，N=1000）
-│   ├── cascades.txt                   # GNN训练级联序列（6861条级联）
-│   ├── edges.txt                      # 社交关系边（120万条）
-│   ├── users_all.pkl                  # 用户画像（835,845用户，含简介/历史/社交关系）
-│   ├── news_all.pkl                   # 话题内容（6,861条，含文本/多模态路径）
-│   ├── user2id.pkl                    # 用户ID映射
-│   └── news2id.pkl                    # 话题ID映射
-├── results/                           # 实验结果输出目录
+│   └── evaluation.py                  # 评估指标计算
+├── LLM/                               # 单智能体 LLM 评估
+│   ├── mllms.py                       # 通用 LLM 排序
+│   └── mllms_qwen3.7_hardneg.py       # 闭源 API 模型评估
+├── Casbench/                          # 数据集（从 Kaggle 下载）
+├── results/                           # 实验结果输出
 └── README.md
 ```
 
@@ -79,52 +70,52 @@ python -m vllm.entrypoints.openai.api_server \
 ### 2. 运行 CasReranker 推理
 
 ```bash
-cd /home/yz/release
+cd CasReranker
 conda activate yz_vllm
 
 # N=20（消融实验默认）
-python code/diffagent_v4.py 20
+python CasReranker.py 20
 
 # N=50（主实验）
-python code/diffagent_v4.py 50
+python CasReranker.py 50
 
 # N=100 / N=500 / N=1000
-python code/diffagent_v4.py 100
+python CasReranker.py 100
 ```
 
-运行前确认 `code/diffagent_v4.py` 中的配置：
-- `DP = "../data"` — 数据集路径
+运行前确认 `CasReranker.py` 中的配置：
+- `DP = "../Casbench"` — 数据集路径
 - `MODEL_NAME = "Qwen3.5_4B"` — vLLM served-model-name
-- `MEMORY_PATH = "./diffagent_v4_memory.json"` — RAG持久记忆文件
+- `MEMORY_PATH = "./CasReranker_memory.json"` — RAG持久记忆文件
 - 自动探测端口 8300-8303 上已启动的 vLLM 实例
 
 ### 3. 运行单智能体 LLM 评估
 
 ```bash
+cd LLM
 conda activate yz_vllm
 
 # 开放API模型（需先配置 api_key 和 base_url）
-python code/mllms.py
+python mllms.py
 
 # 闭源API模型（Qwen3.7-plus / GLM-5.2 / GPT-5.4）
-python code/mllms_qwen3.7_hardneg.py
+python mllms_qwen3.7_hardneg.py
 ```
 
 ### 4. 运行 GNN 基线训练+评估
 
 ```bash
+cd SmallModel
 conda activate idp
 
 # 训练并评估全部10个GNN模型
-python code/baselines_all_hardneg.py
+python baselines_all_hardneg.py
 
 # 单独运行
-python code/GCN.py
-python code/GraphSAGE.py
-python code/PMRCA.py
+python GCN.py
+python GraphSAGE.py
+python PMRCA.py
 ```
-
-所有模型的数据路径均指向 `../Casbench/`（相对于 `code/` 目录）。
 
 ## CasReranker 架构
 
@@ -156,7 +147,7 @@ python code/PMRCA.py
 
 ## 消融实验
 
-在 `code/diffagent_v4.py` 中修改配置：
+在 `CasReranker/CasReranker.py` 中修改配置：
 
 | 变体 | 方法 |
 |---|---|
@@ -172,11 +163,11 @@ python code/PMRCA.py
 
 | N | 命令 | 测试文件 |
 |---|------|---------|
-| 20 | `code/diffagent_v4.py 20` | test_hardneg.pkl |
-| 50 | `code/diffagent_v4.py 50` | test_hardneg1000.pkl |
-| 100 | `code/diffagent_v4.py 100` | test_hardneg1000.pkl |
-| 500 | `code/diffagent_v4.py 500` | test_hardneg1000.pkl |
-| 1000 | `code/diffagent_v4.py 1000` | test_hardneg1000.pkl |
+| 20 | `CasReranker/CasReranker.py 20` | test_hardneg.pkl |
+| 50 | `CasReranker/CasReranker.py 50` | test_hardneg1000.pkl |
+| 100 | `CasReranker/CasReranker.py 100` | test_hardneg1000.pkl |
+| 500 | `CasReranker/CasReranker.py 500` | test_hardneg1000.pkl |
+| 1000 | `CasReranker/CasReranker.py 1000` | test_hardneg1000.pkl |
 
 ## 评估指标
 
@@ -184,7 +175,7 @@ python code/PMRCA.py
 - **MAP@K**: 前K位的平均精度
 - **NDCG@K**: 归一化折损累计增益
 
-均在 `code/evaluation.py` 中实现，支持 K=1,2,5,10,20,50。
+均在 `SmallModel/evaluation.py` 中实现，支持 K=1,2,5,10,20,50。
 
 ## 验证状态
 

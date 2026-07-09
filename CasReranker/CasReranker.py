@@ -1,8 +1,8 @@
 ﻿# -*- coding: utf-8 -*-
 """
-DiffAgent V4 — 最终完整版
+CasReranker — 多智能体协同级联重排序
 - 多卡并行: 自动探测GPU, 每卡一个vLLM, 线程池分发
-- 全特性: RAG持久记忆 + 三专家辩论 + 协调器裁决 + 拓扑感知
+- 全特性: RAG持久记忆 + 三专家协同 + 决策智能体裁决 + 拓扑感知
 - 自适应token: N值缩放, 不完整翻倍重试
 """
 import sys, pickle, random, json, time, numpy as np, os, subprocess, threading
@@ -17,7 +17,7 @@ DP = "../Casbench"  # 数据集相对路径
 MODEL_PATH = "YOUR_MODEL_PATH"  # 替换为本地模型路径，如 /data1/yz/Qwen3.5_4B
 MODEL_NAME = "Qwen3.5_4B"  # 替换为实际的 vLLM served-model-name
 N_CAND = int(sys.argv[1]) if len(sys.argv) > 1 else 20
-MEMORY_PATH = "./diffagent_v4_memory.json"  # RAG 记忆文件路径
+MEMORY_PATH = "./CasReranker_memory.json"  # RAG 持久记忆文件路径
 SAVE_PATH = f"/home/yz/diffagent_v4_N{N_CAND}.json"
 LOG_PATH = f"/home/yz/diffagent_v4_N{N_CAND}.log"
 
