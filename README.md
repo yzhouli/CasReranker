@@ -50,7 +50,7 @@ conda activate conda_env
 
 # 每张GPU启动一个vLLM实例（CasReranker自动探测可用GPU）
 CUDA_VISIBLE_DEVICES=0 python -m vllm.entrypoints.openai.api_server \
-    --model /data1/yz/Qwen3.5_4B \
+    --model Qwen3.5_4B \
     --served-model-name Qwen3.5_4B \
     --port 8300 \
     --max-model-len 32768 \
@@ -59,7 +59,7 @@ CUDA_VISIBLE_DEVICES=0 python -m vllm.entrypoints.openai.api_server \
 
 # 单GPU测试模式（端口8400）
 python -m vllm.entrypoints.openai.api_server \
-    --model /data1/yz/Qwen3.5_4B \
+    --model Qwen3.5_4B \
     --served-model-name Qwen3.5_4B \
     --port 8400 \
     --max-model-len 16384 \
