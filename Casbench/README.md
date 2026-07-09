@@ -18,6 +18,7 @@
 | `val_cascades.txt` | 4.0 MB | 验证集级联 |
 | `edges.txt` | 30 MB | 社交关系边 |
 | `news_all.pkl` | 1.5 MB | 话题内容（文本/多模态路径） |
+| `mm` | 1.5 MB | 话题多模态内容（对应多模态路径） |
 | `test.pkl` | 12 MB | 原始测试集 |
 | `test_hardneg.pkl` | 1.9 MB | 难负样本测试集（N=20/50/100） |
 | `test_hardneg1000.pkl` | 13 MB | 大候选集测试（N=500/1000） |
