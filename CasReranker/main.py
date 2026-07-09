@@ -89,6 +89,6 @@ def main(save_path, dataset_path):
 
 
 if __name__ == '__main__':
-    save_path = f'saves/{MODEL_NAME}_MAS1(9B_CoT_100).json'
+    save_path = f'saves/{MODEL_NAME}.json'
     dataset_path = f'../Casbench'
     main(save_path, dataset_path)
