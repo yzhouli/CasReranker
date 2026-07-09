@@ -14,12 +14,12 @@ from collections import defaultdict
 # 配置
 # ═══════════════════════════
 DP = "../Casbench"  # 数据集相对路径
-MODEL_PATH = "YOUR_MODEL_PATH"  # 替换为本地模型路径，如 /data1/yz/Qwen3.5_4B
+MODEL_PATH = "YOUR_MODEL_PATH"  # 替换为本地模型路径
 MODEL_NAME = "Qwen3.5_4B"  # 替换为实际的 vLLM served-model-name
 N_CAND = int(sys.argv[1]) if len(sys.argv) > 1 else 20
 MEMORY_PATH = "./CasReranker_memory.json"  # RAG 持久记忆文件路径
-SAVE_PATH = f"/home/yz/diffagent_v4_N{N_CAND}.json"
-LOG_PATH = f"/home/yz/diffagent_v4_N{N_CAND}.log"
+SAVE_PATH = f"./CasReranker_N{N_CAND}.json"
+LOG_PATH = f"./CasReranker_N{N_CAND}.log"
 
 # ═══════════════════════════
 # GPU/vLLM 管理
